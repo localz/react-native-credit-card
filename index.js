@@ -25,7 +25,7 @@ class CreditCard extends Component {
         super(props);
         this.state = {
             type: {
-                name:"unknown",
+                name: "unknown",
                 length: 16
             }
         }
@@ -42,18 +42,18 @@ class CreditCard extends Component {
     updateType(props) {
 
         if (!props.number)
-            return this.setState({type: {name:"unknown", length: 16}});
+            return this.setState({ type: { name: "unknown", length: 16 } });
 
         var type = validate.cardType(props.number);
         if (type) {
             if (type === "amex") {
-                return this.setState({type: {name: type, length: 15}});
+                return this.setState({ type: { name: type, length: 15 } });
             } else {
-                return this.setState({type: {name: type, length: 16}});
+                return this.setState({ type: { name: type, length: 16 } });
             }
         }
 
-        return this.setState({type: {name: "unknown", length: 16}});
+        return this.setState({ type: { name: "unknown", length: 16 } });
     }
     number() {
         if (!this.props.number) {
@@ -76,7 +76,7 @@ class CreditCard extends Component {
 
             string = string.substring(0, space_index1) + " " + string.substring(space_index1, space_index2) + " " + string.substring(space_index2);
         } else {
-            const amountOfSpaces = Math.ceil(maxLength/4);
+            const amountOfSpaces = Math.ceil(maxLength / 4);
 
             for (var i = 1; i <= amountOfSpaces; i++) {
                 var space_index = (i * 4 + (i - 1));
@@ -127,30 +127,31 @@ class CreditCard extends Component {
 
     render() {
         const isAmex = this.state.type && this.state.type.name === "amex";
-        const cardStyle = [styles.container, {width: this.props.width, height: this.props.height, backgroundColor: this.props.bgColor}, this.props.style];
+        const cardStyle = [styles.container, { width: this.props.width, height: this.props.height, backgroundColor: this.props.bgColor }, this.props.style];
         return (
             <View style={styles.cardStyle}>
                 <FlipCard
-                    style={[styles.container, {width: this.props.width, height: this.props.height, backgroundColor: this.props.bgColor}, this.props.style]}
+                    style={[styles.container, { width: this.props.width, height: this.props.height, backgroundColor: this.props.bgColor }, this.props.style]}
                     friction={6}
                     perspective={1000}
                     flipHorizontal={true}
                     flipVertical={false}
                     flip={this.props.focused === 'cvc'}
                     clickable={true}
-                    onFlipped={(isFlipped)=>{console.log('isFlipped', isFlipped)}}
-                    >
-                    <View style={[styles.front, {width: this.props.width, height: this.props.height}]}>
+                    onFlipped={(isFlipped) => { console.log('isFlipped', isFlipped) }}
+                >
+                    <View style={[styles.front, { width: this.props.width, height: this.props.height }]}>
                         {this.props.imageFront ?
-                            <Image source={this.props.imageFront} style={[styles.bgImage, {width: this.props.width, height: this.props.height}]} />
+                            <Image source={this.props.imageFront} style={[styles.bgImage, { width: this.props.width, height: this.props.height }]} />
                             : null}
                         <View style={styles.lower}>
                             {this.props.shiny ?
                                 <View style={styles.shinyFront} />
                                 : null}
                             <Image
-                                 style={styles.logo}
-                                 source={{uri: images[this.props.type ? this.props.type : this.state.type.name]}}
+                                style={styles.logo}
+                                source={{ uri: images[this.props.type ? this.props.type : this.state.type.name] }}
+                                resizeMode={'contain'}
                             />
                             {isAmex ?
                                 <View style={styles.cvcFront}>
@@ -158,31 +159,30 @@ class CreditCard extends Component {
                                 </View>
                                 : null}
                             <View style={styles.info}>
-                                <View style={styles.number}><Text style={styles.textNumber}>{this.getValue("number")}</Text></View>
+                                <View style={[styles.number, { marginBottom: 20 }]}><Text style={styles.textNumber}>{this.getValue("number")}</Text></View>
                                 <View style={styles.rowWrap}>
                                     <View style={styles.name}><Text style={styles.textName}>{this.getValue("name")}</Text></View>
-                                    <View style={styles.validthru}><Text style={styles.textValidThru}>VALID THRU</Text></View>
                                     <View
                                         style={styles.expiry}
                                         data-before={this.props.expiryBefore}
                                         data-after={this.props.expiryAfter}>
-                                        <Text style={styles.textSmall}>MONTH/YEAR</Text>
+                                        <Text style={[styles.textSmall]}>EXPIRES</Text>
                                         <Text style={styles.textExpiry}>{this.getValue("expiry")}</Text>
                                     </View>
                                 </View>
                             </View>
                         </View>
                     </View>
-                    <View style={[styles.back, {width: this.props.width, height: this.props.height}]}>
+                    <View style={[styles.back, { width: this.props.width, height: this.props.height }]}>
                         {this.props.imageBack ?
-                            <Image source={this.props.imageBack} style={[styles.bgImage, {width: this.props.width, height: this.props.height}]} />
+                            <Image source={this.props.imageBack} style={[styles.bgImage, { width: this.props.width, height: this.props.height }]} />
                             : null}
                         {this.props.bar ?
-                            <View style={styles.bar}/>
+                            <View style={styles.bar} />
                             : null}
                         <View style={styles.cvc}><Text style={styles.textCvc}>{this.getValue("cvc")}</Text></View>
                         {this.props.shiny ?
-                            <View style={styles.shinyBack} data-after={this.props.shinyAfterBack}/>
+                            <View style={styles.shinyBack} data-after={this.props.shinyAfterBack} />
                             : null}
                     </View>
                 </FlipCard>
@@ -193,16 +193,28 @@ class CreditCard extends Component {
 
 const styles = StyleSheet.create({
     container: {
-        borderRadius: 8,
+        borderRadius: 15,
         borderWidth: 0,
         flex: 0,
+        ...Platform.select({
+            ios: {
+                shadowColor: 'rgba(0,0,0, .4)',
+                shadowOffset: { height: 1, width: 1 },
+                shadowOpacity: 1,
+                shadowRadius: 1,
+            },
+            android: {
+                backgroundColor: '#fff',
+                elevation: 2,
+            },
+        }),
     },
     logo: {
         height: 35,
         width: 57,
         position: 'absolute',
         top: 20,
-        right: 20
+        left: 20
     },
     text: {
         color: '#fff'
@@ -213,7 +225,7 @@ const styles = StyleSheet.create({
         top: 0,
         bottom: 0,
         right: 0,
-        borderRadius: 8
+        borderRadius: 15
     },
     lower: {
         flex: 1,
@@ -246,10 +258,11 @@ const styles = StyleSheet.create({
         backgroundColor: 'transparent',
     },
     textSmall: {
-        fontSize: 8,
+        fontSize: 10,
         color: '#ddd',
-        fontWeight: '900',
+        fontWeight: '300',
         backgroundColor: 'transparent',
+        opacity: 0.8,
     },
     textNumber: {
         color: '#fff',
